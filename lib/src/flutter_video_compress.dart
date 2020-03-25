@@ -90,6 +90,7 @@ class FlutterVideoCompress {
     String path, {
     int quality = 100,
     int position = -1,
+    String provider,
   }) async {
     assert(path != null);
     assert(quality > 1 || quality < 100);
@@ -98,6 +99,7 @@ class FlutterVideoCompress {
       'path': path,
       'quality': quality,
       'position': position,
+      'provider': provider,
     });
 
     final file = File(filePath);
@@ -126,6 +128,7 @@ class FlutterVideoCompress {
     String path, {
     int startTime = 0,
     int endTime = -1,
+    String provider,
     int duration = -1, // When you do not know the end time
   }) async {
     assert(path != null);
@@ -136,7 +139,8 @@ class FlutterVideoCompress {
       'path': path,
       'startTime': startTime,
       'endTime': endTime,
-      'duration': duration
+      'duration': duration,
+      'provider': provider
     });
 
     final file = File(filePath);
@@ -153,9 +157,10 @@ class FlutterVideoCompress {
   /// final info = await _flutterVideoCompress.getMediaInfo(file.path);
   /// debugPrint(info.toJson());
   /// ```
-  Future<MediaInfo> getMediaInfo(String path) async {
+  Future<MediaInfo> getMediaInfo(String path, String provider) async {
     assert(path != null);
-    final jsonStr = await _invoke<String>('getMediaInfo', {'path': path});
+    final jsonStr = await _invoke<String>(
+        'getMediaInfo', {'path': path, 'provider': provider});
     final jsonMap = json.decode(jsonStr);
     return MediaInfo.fromJson(jsonMap);
   }
@@ -183,6 +188,7 @@ class FlutterVideoCompress {
     int duration,
     bool includeAudio,
     int frameRate,
+    String provider,
   }) async {
     assert(path != null);
     if (_isCompressing) {
@@ -203,6 +209,7 @@ class FlutterVideoCompress {
       'duration': duration,
       'includeAudio': includeAudio,
       'frameRate': frameRate,
+      'provider': provider,
     });
     _isCompressing = false;
     final jsonMap = json.decode(jsonStr);

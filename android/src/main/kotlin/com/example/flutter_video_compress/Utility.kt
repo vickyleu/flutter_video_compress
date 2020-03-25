@@ -5,6 +5,8 @@ import android.graphics.Bitmap
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Build
+import androidx.core.content.FileProvider
+import bravobit.nl.ffmpegandroid.BuildConfig
 import io.flutter.plugin.common.MethodChannel
 import org.json.JSONObject
 import java.io.File
@@ -31,11 +33,20 @@ class Utility(private val channelName: String) {
         return timeStamp.toLong()
     }
 
-    fun getMediaInfoJson(context: Context, path: String): JSONObject {
+    fun getMediaInfoJson(context: Context, path: String,provider:String): JSONObject {
         val file = File(path)
         val retriever = MediaMetadataRetriever()
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                val uri = FileProvider.getUriForFile(context, provider, file)
+                retriever.setDataSource(context, uri)
+            }else{
+                retriever.setDataSource(context, Uri.fromFile(file))
+            }
+        }catch (e:Exception){
+            return  JSONObject()
+        }
 
-        retriever.setDataSource(context, Uri.fromFile(file))
 
         val durationStr = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
         val title = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE) ?: ""

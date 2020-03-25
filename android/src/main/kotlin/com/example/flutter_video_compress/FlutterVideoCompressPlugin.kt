@@ -37,12 +37,14 @@ class FlutterVideoCompressPlugin : MethodCallHandler {
                 val path = call.argument<String>("path")!!
                 val quality = call.argument<Int>("quality")!!
                 val position = call.argument<Int>("position")!!.toLong()
+                val provider = call.argument<String>("provider")!!
                 ThumbnailUtility(channelName).getThumbnailWithFile(reg.context(), path, quality,
                         position, result)
             }
             "getMediaInfo" -> {
                 val path = call.argument<String>("path")!!
-                result.success(utility.getMediaInfoJson(reg.context(), path).toString())
+                val provider = call.argument<String>("provider")
+                result.success(utility.getMediaInfoJson(reg.context(), path, provider).toString())
             }
             "compressVideo" -> {
                 val path = call.argument<String>("path")!!
@@ -52,9 +54,10 @@ class FlutterVideoCompressPlugin : MethodCallHandler {
                 val duration = call.argument<Int>("duration")
                 val includeAudio = call.argument<Boolean>("includeAudio")
                 val frameRate = call.argument<Int>("frameRate")
+                val provider = call.argument<String>("frameRate")
 
                 ffmpegCommander?.compressVideo(path, VideoQuality.from(quality), deleteOrigin,
-                        startTime, duration, includeAudio, frameRate, result, reg.messenger())
+                        startTime, duration, includeAudio, frameRate, result, reg.messenger(), provider)
             }
             "cancelCompression" -> {
                 ffmpegCommander?.cancelCompression()

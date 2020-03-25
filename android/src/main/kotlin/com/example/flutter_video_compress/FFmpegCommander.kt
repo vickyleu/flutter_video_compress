@@ -18,7 +18,7 @@ class FFmpegCommander(private val context: Context, private val channelName: Str
     fun compressVideo(path: String, quality: VideoQuality, deleteOrigin: Boolean,
                       startTime: Int?, duration: Int? = null, includeAudio: Boolean?,
                       frameRate: Int?, result: MethodChannel.Result,
-                      messenger: BinaryMessenger) {
+                      messenger: BinaryMessenger, provider: String) {
 
         val ffmpeg = FFmpeg.getInstance(context)
 
@@ -71,7 +71,7 @@ class FFmpegCommander(private val context: Context, private val channelName: Str
                         if (stopCommand) {
                             print("FlutterVideoCompress: Video compression has stopped")
                             stopCommand = false
-                            val json = utility.getMediaInfoJson(context, path)
+                            val json = utility.getMediaInfoJson(context, path, provider)
                             json.put("isCancel", true)
                             result.success(json.toString())
                             totalTime = 0
@@ -80,7 +80,7 @@ class FFmpegCommander(private val context: Context, private val channelName: Str
                     }
 
                     override fun onFinish() {
-                        val json = utility.getMediaInfoJson(context, file.absolutePath)
+                        val json = utility.getMediaInfoJson(context, file.absolutePath, provider)
                         json.put("isCancel", false)
                         result.success(json.toString())
                         if (deleteOrigin) {
